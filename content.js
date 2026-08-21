@@ -12,6 +12,11 @@
   const { open, send } = xhr;
 
   xhr.open = function (method, url, ...args) {
+    // 重置狀態，避免影響其他 API
+    this._searchQuery = null;
+    this._isOrderId = false;
+    this._searchUrl = null;
+
     const u = new URL(url, BASE_URL);
 
     // Order API
