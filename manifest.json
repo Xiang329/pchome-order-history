@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PChome 歷史訂單查詢",
-  "version": "1.0",
+  "version": "1.1",
   "description": "恢復 PChome 原先的歷史訂單查詢功能，讓使用者可繼續查詢三年前的訂單紀錄。",
   "homepage_url": "https://github.com/Xiang329/pchome-order-history",
   "icons": {
