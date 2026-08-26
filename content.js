@@ -50,29 +50,32 @@
       return send.call(this, body);
     }
 
+    const respond = data => {
+      const text = JSON.stringify(data);
+
+      Object.defineProperties(this, {
+        readyState: { value: 4, configurable: true },
+        status: { value: 200, configurable: true },
+        statusText: { value: 'OK', configurable: true },
+        responseText: { value: text, configurable: true },
+        response: {
+          value: this.responseType === 'json' ? data : text,
+          configurable: true
+        }
+      });
+
+      ['readystatechange', 'load', 'loadend']
+        .forEach(type => this.dispatchEvent(new Event(type)));
+    };
+
     searchOrder(this._searchUrl, this._searchQuery)
-      .then(json => {
-        const text = JSON.stringify(json);
-
-        Object.defineProperties(this, {
-          readyState: { value: 4, configurable: true },
-          status: { value: 200, configurable: true },
-          statusText: { value: 'OK', configurable: true },
-          responseText: { value: text, configurable: true },
-          response: {
-            value: this.responseType === 'json' ? json : text,
-            configurable: true
-          }
-        });
-
-        ['readystatechange', 'load', 'loadend']
-          .forEach(type => this.dispatchEvent(new Event(type)));
-      })
+      .then(respond)
       .catch(err => {
         console.error('[PChome API Shim]', err);
 
-        ['error', 'loadend']
-          .forEach(type => this.dispatchEvent(new Event(type)));
+        // 如果出錯，回傳空資料，避免頁面讀取狀態卡住
+        const emptyData = { TotalRows: 0, Rows: [] };
+        respond(emptyData);
       });
   };
 
